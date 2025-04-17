@@ -6,7 +6,8 @@
 #include "background.h"
 #include "player.h"
 #include "item.h"
-#include "score.h" // <-- thêm dòng này
+#include "score.h"
+#include "menu.h"
 
 class Game {
 public:

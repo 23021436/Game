@@ -2,9 +2,9 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 #include <iostream>
+#include <cmath>
 
 Menu::Menu(SDL_Renderer* renderer) {
-    // Initialize font
     if (TTF_Init() == -1) {
         std::cerr << "Failed to initialize TTF: " << TTF_GetError() << std::endl;
     }
@@ -13,33 +13,28 @@ Menu::Menu(SDL_Renderer* renderer) {
         std::cerr << "Failed to load font: " << TTF_GetError() << std::endl;
     }
 
-    // Load background texture
     backgroundTexture = IMG_LoadTexture(renderer, "..\\assets\\img\\ChatGPT Image Apr 15, 2025, 12_30_51 AM.png");
     if (!backgroundTexture) {
         std::cerr << "Failed to load menu background: " << IMG_GetError() << std::endl;
     }
 
-    // Initialize audio
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
         std::cerr << "Failed to initialize audio: " << Mix_GetError() << std::endl;
     }
 
-    // Load background music
     backgroundMusic = Mix_LoadMUS("D:\\vsstudio\\codeC++\\game1\\TryGame\\assets\\audio\\Soundtrack - Bouncing Balls.mp3");
     if (!backgroundMusic) {
         std::cerr << "Failed to load music: " << Mix_GetError() << std::endl;
     }
     else {
-        Mix_PlayMusic(backgroundMusic, -1); // Loop music
+        Mix_PlayMusic(backgroundMusic, -1);
     }
 
-    // Load click sound
     clickSound = Mix_LoadWAV("..\\assets\\sounds\\click.wav");
     if (!clickSound) {
         std::cerr << "Failed to load click sound: " << Mix_GetError() << std::endl;
     }
 
-    // Initialize buttons
     buttons = {
         { {200, 150, 200, 50}, "Play",    {255, 255, 255, 255}, {200, 200, 200, 255}, false },
         { {200, 220, 200, 50}, "Score",   {255, 255, 255, 255}, {200, 200, 200, 255}, false },
@@ -47,6 +42,8 @@ Menu::Menu(SDL_Renderer* renderer) {
         { {200, 360, 200, 50}, "Story",   {255, 255, 255, 255}, {200, 200, 200, 255}, false },
         { {200, 430, 200, 50}, "Exit",    {255, 255, 255, 255}, {200, 200, 200, 255}, false }
     };
+
+    startTime = SDL_GetTicks();
 }
 
 Menu::~Menu() {
@@ -70,22 +67,23 @@ void Menu::handleEvent(const SDL_Event& e, bool& isRunning, bool& startGame, int
         for (size_t i = 0; i < buttons.size(); ++i) {
             if (SDL_PointInRect(&mousePoint, &buttons[i].rect)) {
                 playClickSound();
-                menuOption = static_cast<int>(i); // Gán đúng lựa chọn
+                menuOption = static_cast<int>(i);
                 if (i == MENU_PLAY) startGame = true;
                 break;
             }
         }
     }
+
+    if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE) {
+        isRunning = false;
+    }
 }
 
-
 void Menu::render(SDL_Renderer* renderer) {
-    // Render background
     if (backgroundTexture) {
         SDL_RenderCopy(renderer, backgroundTexture, nullptr, nullptr);
     }
 
-    // Render buttons
     for (const auto& button : buttons) {
         SDL_Color color = button.isHovered ? button.hoverColor : button.normalColor;
         SDL_Texture* textTexture = createTextTexture(renderer, button.text, color);
@@ -96,6 +94,23 @@ void Menu::render(SDL_Renderer* renderer) {
         else {
             std::cerr << "Failed to create text texture for button: " << button.text << std::endl;
         }
+    }
+
+    // Hiệu ứng lơ lửng ESC text
+    Uint32 currentTime = SDL_GetTicks();
+    float yOffset = 10 * sin(currentTime / 300.0f);
+
+    SDL_Color textColor = { 255, 255, 255, 255 };
+    SDL_Surface* escSurface = TTF_RenderText_Solid(font, "Press ESC to exit", textColor);
+    if (escSurface) {
+        SDL_Texture* escTexture = SDL_CreateTextureFromSurface(renderer, escSurface);
+        int textW = escSurface->w;
+        int textH = escSurface->h;
+        SDL_FreeSurface(escSurface);
+
+        SDL_Rect textRect = { (600 - textW) / 2, 700 + static_cast<int>(yOffset), textW, textH };
+        SDL_RenderCopy(renderer, escTexture, nullptr, &textRect);
+        SDL_DestroyTexture(escTexture);
     }
 }
 

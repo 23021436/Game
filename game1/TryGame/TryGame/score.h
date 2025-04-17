@@ -1,4 +1,4 @@
-#ifndef SCORE_H
+﻿#ifndef SCORE_H
 #define SCORE_H
 
 #include <vector>

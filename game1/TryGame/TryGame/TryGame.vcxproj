@@ -27,6 +27,7 @@
     <ClCompile Include="player.cpp" />
     <ClCompile Include="score.cpp" />
     <ClCompile Include="setting.cpp" />
+    <ClCompile Include="story.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="background.h" />
@@ -36,6 +37,7 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="setting.h" />
+    <ClInclude Include="story.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

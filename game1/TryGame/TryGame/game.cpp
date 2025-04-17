@@ -1,4 +1,5 @@
 ﻿#include "game.h"
+#include "story.h"
 #include "menu.h"
 #include "setting.h"
 #include "score.h"
@@ -184,8 +185,8 @@ void Game::showSettings() {
 }
 
 void Game::showStory() {
-    std::cout << "Game Story:\n";
-    std::cout << "Once upon a time, a panda embarked on an adventure...\n";
+Story story(renderer);
+story.showStory(isRunning);
 }
 
 void Game::clean() {

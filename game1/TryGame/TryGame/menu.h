@@ -40,4 +40,6 @@ private:
     SDL_Texture* backgroundTexture;
     Mix_Chunk* clickSound;
     Mix_Music* backgroundMusic;
+
+    Uint32 startTime;
 };
